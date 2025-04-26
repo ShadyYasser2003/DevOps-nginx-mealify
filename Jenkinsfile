@@ -6,6 +6,7 @@ pipeline {
                 steps {
                     git branch: 'main', // تحديد الفرع الرئيسي
                         url: 'https://github.com/ShadyYasser2003/nginx-mealify.git'
+                        
                     }
                 }
         }
