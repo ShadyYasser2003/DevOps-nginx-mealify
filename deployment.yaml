@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: mealify
-        image: shady203/mealify
+        image: shady203/mealify:IMAGE_TAG
         ports:
         - containerPort: 80
 
