@@ -11,7 +11,7 @@ pipeline {
 
         stage('Build Image') {
             steps {
-                sh 'docker build -t shady203/mealify:$GIT_COMMIT .'
+                sh 'docker build -t shady203/mealify:$GIT_COMMIT ./my-nginx-project '
             }
         }
 
