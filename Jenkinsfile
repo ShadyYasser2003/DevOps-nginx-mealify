@@ -66,6 +66,8 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        export KUBECONFIG=$HOME/.kube/config
+                        minikube update-context
                         sed -i "s|IMAGE_TAG|$GIT_COMMIT|g" deployment.yaml
                         kubectl apply -f deployment.yaml
                     '''
