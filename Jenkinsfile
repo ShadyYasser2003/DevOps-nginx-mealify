@@ -1,36 +1,36 @@
 pipeline {
     agent any  
     
-    stages{
-            stage('Checkout SCM'){ 
-                    steps {
-                        git branch: 'main', 
-                            url: 'https://github.com/ShadyYasser2003/nginx-mealify.git'
-                            
-                        }
-                    }
-                stage('build image') {
-                        sh ' docker build -t shady203/mealify:$GIT_COMMIT . '
-                        }
-                
+    stages {
+        stage('Checkout SCM') { 
+            steps {
+                git branch: 'main', 
+                    url: 'https://github.com/ShadyYasser2003/nginx-mealify.git'
+            }
+        }
 
-            stage('Trivy Vulnerability Scanner') {
-                steps {
-                sh ''' // تنفيذ أوامر shell متعددة الأسطر
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t shady203/mealify:$GIT_COMMIT .'
+            }
+        }
+
+        stage('Trivy Vulnerability Scanner') {
+            steps {
+                sh '''
                     trivy image shady203/mealify:$GIT_COMMIT \
-                    --severity LOW,MEDIUM,HIGH \
-                    --exit-code 0 \
-                    --quiet \
-                    --format json -o trivy-image-MEDIUM-results.json
-                  
+                        --severity LOW,MEDIUM,HIGH \
+                        --exit-code 0 \
+                        --quiet \
+                        --format json -o trivy-image-MEDIUM-results.json
+
                     trivy image shady203/mealify:$GIT_COMMIT \
-                    --severity CRITICAL \
-                    --exit-code 1 \
-                    --quiet \
-                    --format json -o trivy-image-CRITICAL-results.json
+                        --severity CRITICAL \
+                        --exit-code 1 \
+                        --quiet \
+                        --format json -o trivy-image-CRITICAL-results.json
                 '''
-
-                }
+            }
             post { 
                 always { 
                     sh ''' 
@@ -51,33 +51,32 @@ pipeline {
                             --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
                     '''
                 }
-                }
             }
+        }
 
-           stage('push image')
-            {
-                steps{
-                    withDockerRegistry(credentialsId: 'DockerHub-credentials', url: "" ) {
-                    sh ' docker push  shady203/mealify:$GIT_COMMIT '
-                    }
+        stage('Push Image') {
+            steps {
+                withDockerRegistry(credentialsId: 'DockerHub-credentials', url: '') {
+                    sh 'docker push shady203/mealify:$GIT_COMMIT'
                 }
             }
-            
-            stage('Deploy to k8s Minikube') {
-                steps {
-                    script {
-                        sh '''
+        }
+
+        stage('Deploy to k8s Minikube') {
+            steps {
+                script {
+                    sh '''
                         sed -i "s|IMAGE_TAG|$GIT_COMMIT|g" deployment.yaml
                         kubectl apply -f deployment.yaml
-                        '''
-                    }
+                    '''
                 }
             }
+        }
 
-            stage('Test NodePort Access') {
-                steps {
-                    script {
-                        sh '''
+        stage('Test NodePort Access') {
+            steps {
+                script {
+                    sh '''
                         echo "Getting Minikube IP..."
                         MINIKUBE_IP=$(minikube ip)
 
@@ -85,15 +84,9 @@ pipeline {
                         curl --fail http://$MINIKUBE_IP:30012 || (echo "❌ Failed to reach the application!" && exit 1)
 
                         echo "✅ Application is reachable!"
-                        '''
-                    }
+                    '''
                 }
             }
-
-
-            
-
-
-        
+        }
     }
 }
