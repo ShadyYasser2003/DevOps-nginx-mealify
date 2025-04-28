@@ -31,7 +31,7 @@
 
 Jenkins automates the CI/CD process, including code checkout, Docker image building and pushing, and deployment to Minikube.
 
-![Successful Jenkins Pipeline](successful pipeline image.png)
+<img src="image.png"></img>
 
 This image shows a successful execution of the Jenkins pipeline for the Mealify project. It illustrates the different stages of the pipeline, including:
 
