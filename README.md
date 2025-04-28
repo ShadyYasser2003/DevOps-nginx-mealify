@@ -2,7 +2,7 @@
 
 ## Technologies Used
 
-* **Frontend:** HTML, CSS 
+* **Frontend:** HTML, CSS
 * **Web Server:** Nginx
 * **Containerization:** Docker
 * **Orchestration:** Kubernetes (Minikube for local development)
@@ -30,6 +30,21 @@
 ## Jenkins Pipeline
 
 Jenkins automates the CI/CD process, including code checkout, Docker image building and pushing, and deployment to Minikube.
+
+![Successful Jenkins Pipeline](successful pipeline image.png)
+
+This image shows a successful execution of the Jenkins pipeline for the Mealify project. It illustrates the different stages of the pipeline, including:
+
+* **Start:** The beginning of the pipeline execution.
+* **Checkout SCM:** Checking out the source code from the version control system (Git).
+* **Build Image:** Building the Docker image for the Nginx application.
+* **Trivy Vulnerability Scan:** Scanning the Docker image for potential security vulnerabilities.
+* **Push Image:** Pushing the built Docker image to a container registry.
+* **Deploy to k8s:** Deploying the application to the Kubernetes cluster (Minikube in this case).
+* **Test NodePort Access:** Verifying that the application is accessible through the NodePort service.
+* **End:** The successful completion of the pipeline.
+
+The green checkmarks indicate that each stage of the pipeline was executed successfully. The "Test NodePort Access" section further confirms that the application is reachable.
 
 ## Docker Usage
 
